@@ -12,11 +12,11 @@ public class DataBridge : MonoBehaviour
     }
     public void SaveDataToDB()
     {
-        _data.TakeAllData();
         if (!PlayerPrefs.HasKey(IdKey)) {
-            string id = (Random.Range(100, 999999) + _data.data1.hihgscore + _data.data1.money).ToString();
-            PlayerPrefs.SetString(IdKey, id); 
-        }
+            GenerateUserID();
+            return;
+        }        
+        _data.TakeAllData();
         _reference.Child("users").Child(PlayerPrefs.GetString(IdKey)).SetRawJsonValueAsync(JsonUtility.ToJson(_data));
     }
 
@@ -24,12 +24,18 @@ public class DataBridge : MonoBehaviour
     {
         if (!PlayerPrefs.HasKey(IdKey))
         {
-            int id = Random.Range(100000, 500001) + Random.Range(100000, 500001) + Random.Range(100000, 500001) + Random.Range(1, 250) - Random.Range(1, 50);
-            _reference.Child("users").Child(PlayerPrefs.GetString(IdKey)).SetRawJsonValueAsync(JsonUtility.ToJson(_data));
-            PlayerPrefs.SetInt(IdKey, id);
+            GenerateUserID();
             return;
         }
         LoadDataFromDB();
+    }
+
+    private void GenerateUserID()
+    {
+        _data.TakeAllData();
+        int id = Random.Range(100000, 500001) + Random.Range(100000, 500001) + Random.Range(100000, 500001) + Random.Range(1, 250) - Random.Range(1, 50);
+        _reference.Child("users").Child(PlayerPrefs.GetString(IdKey)).SetRawJsonValueAsync(JsonUtility.ToJson(_data));
+        PlayerPrefs.SetInt(IdKey, id);
     }
 
     public void LoadDataFromDB()

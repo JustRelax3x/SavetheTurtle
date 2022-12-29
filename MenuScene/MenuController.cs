@@ -11,18 +11,14 @@ public class MenuController : MonoBehaviour
     public Text[] MainTextMenu;
     public Text[] ShopMenu;
     public GameObject[] SettingsMenu;
-    bool ShopActive = false, Daily = false;
-    bool SettingsActive = false, Leaderboards = false, Info = false, Translated = false, ShopInfo = false;
     public AudioMixer Mixer;
     public Button[] Skins, AbilityButtons;
     public Button[] Skills, Maps;
     public GameObject[] ShopButtons;
     public GameObject[] Leaderboard;
     float dimskins=20, dimskills=6, dimabil = 4;   // сколько скинов
-    bool ShopSubOpen = false, ShopAbilityInfo = false;
     readonly int[] costPuck = {200, 500, 1000}, costShield = {200, 500, 800, 1200, 1300, 1400,1500}, costRocket = {300, 600 , 900 , 1300}, costAbilities = {200, 500, 1000, 1300};
     public Button VolumeButton, MusicButton, LanguageButton, RandomMapButton;
-    public Text[] objects;
     public Text SkinName, SkinDesc;
     int skin, ability, map;
     AchInc Ach;
@@ -33,28 +29,6 @@ public class MenuController : MonoBehaviour
 
     public GameObject[] X2PearlsObjects;
     private System.DateTime? dateTime;
-
-    public void ShowDailyPanel()
-    {
-        Daily = true;
-    }
-    public void HideDailyPanel()
-    {
-        Daily = false;
-        dateTime = Player.dateTime;
-    }
-
-    public void TrackChooser(int x)
-    {   
-        PlayerPrefs.SetInt("Track", x);
-        if (x == -1) x = TracksImage.Length -1;
-        for (int i =0; i<TracksImage.Length; i++)
-        {
-                TracksImage[i].GetComponent<SpriteRenderer>().color = new Color(0.47f, 0.47f, 0.47f);
-        }
-        TracksImage[x].GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
-
-    }
 
     private void LanguageUpdate()
     {
@@ -69,25 +43,6 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void OnClickMusic()
-    {
-        if (!Player.mutedmus)
-        {
-            Mixer.SetFloat("Music", -80f);
-            Player.mutedmus = true;
-            MusicButton.transform.GetChild(0).gameObject.SetActive(false);
-            MusicButton.transform.GetChild(1).gameObject.SetActive(true);
-            Tracks.SetActive(false);
-        }
-        else
-        {
-            Mixer.SetFloat("Music", 0f);
-            Player.mutedmus = false;
-            MusicButton.transform.GetChild(1).gameObject.SetActive(false);
-            MusicButton.transform.GetChild(0).gameObject.SetActive(true);
-            Tracks.SetActive(true);
-        }
-    }
     public void OnClickVolume()
     {
         if (!Player.muted)
@@ -184,14 +139,11 @@ public class MenuController : MonoBehaviour
         }
         ShopButtons[4].SetActive(false);
         ShopButtons[5].SetActive(true);
-        ShopInfo = true;
-
     }
 
     public void OpenDonate()
     {
         DonatePanel.SetActive(true);
-        ShopSubOpen = true;
         ShopButtons[0].SetActive(false);
         ShopButtons[1].SetActive(false);
         ShopButtons[2].SetActive(false);
@@ -890,11 +842,9 @@ public class MenuController : MonoBehaviour
                 RandomMapButton.interactable = false;
                 RandomMapButton.transform.GetChild(0).GetComponent<Text>().text = Assets.SimpleLocalization.LocalizationManager.Localize("select");
             }
-            Translated = true;
     }
     public void OpenAbilityShop(int x)
     {
-        ShopSubOpen = true;
         ShopButtons[0].SetActive(false);
         ShopButtons[2].SetActive(false);
         ShopButtons[4].SetActive(false);
@@ -910,16 +860,11 @@ public class MenuController : MonoBehaviour
             ShopButtons[1].SetActive(true);
             ShopButtons[9].SetActive(true);
         }
-        
-        if (!Translated)
-        {
-            Translate();
-        }
+       
     }
 
     public void AbilityInfo(int i)
     {
-        ShopAbilityInfo = true;
         switch (i)
         {
             case 0:
@@ -1054,24 +999,8 @@ public class MenuController : MonoBehaviour
         {
             Ach.UnlockRegular(3);
         }
-        for (int i =0; i<18; i++) //статистика
-        {
-            objects[i].text =": " + Player.Objects[i].ToString();
-        }
-        objects[18].text = Player.Objects[18].ToString();
         dateTime = Player.dateTime;
         StartCoroutine(DailyTriggerUpdater());
-        int x = -1;
-        if (PlayerPrefs.HasKey("Track"))
-        {
-            x = PlayerPrefs.GetInt("Track");
-        }
-        else
-        {
-            PlayerPrefs.SetInt("Track", -1);
-        }
-        TrackChooser(x);
-        MainTextMenu[3].text = Player.highscore.ToString();
         if (Player.X2Pearls)
         {
             X2PearlsObjects[0].SetActive(false);
@@ -1083,102 +1012,6 @@ public class MenuController : MonoBehaviour
             X2PearlsObjects[1].SetActive(false);
         }
     }
-
-    public void OpenInfoPanel()
-    {
-        MainObjectsMenu[0].SetActive(false);
-        MainObjectsMenu[4].SetActive(true);
-        Info = true;
-    }
-
-    //private void FixedUpdate()
-    //{
-    //    if (!ShopActive && !SettingsActive && !Leaderboards && !Info && !Daily)
-    //    {
-    //        if (Input.touchCount > 0)
-    //        {
-    //            Touch Mytouch = Input.GetTouch(0);
-    //            if (Mytouch.phase == TouchPhase.Began)
-    //            {
-    //                Ray ray = Camera.main.ScreenPointToRay(Mytouch.position);
-    //                if (Mathf.Abs(ray.origin.x - MainTextMenu[1].transform.position.x) < MainTextMenu[1].transform.localScale.x * 1.35f  && Mathf.Abs(ray.origin.y - MainTextMenu[1].transform.position.y) < MainTextMenu[1].transform.localScale.y / 1.75f)
-    //                {
-    //                    MainObjectsMenu[0].SetActive(false); 
-    //                    MainObjectsMenu[1].SetActive(true);
-    //                    ShopActive = true;
-    //                    ShopMenu[0].text = Player.money.ToString();
-    //                }
-    //                else if (Mathf.Abs(ray.origin.x - MainTextMenu[2].transform.position.x) < MainTextMenu[2].transform.localScale.x / 1.5f && Mathf.Abs(ray.origin.y - MainTextMenu[2].transform.position.y) < MainTextMenu[2].transform.localScale.y / 1.5f)
-    //                {
-    //                    MainObjectsMenu[0].SetActive(false);
-    //                    MainObjectsMenu[2].SetActive(true);
-    //                    SettingsActive = true;
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //    else if (SettingsActive)
-    //    {
-    //        if (Input.touchCount > 0)
-    //        {
-    //            Touch Mytouch = Input.GetTouch(0);
-    //            if (Mytouch.phase == TouchPhase.Began)
-    //            {
-    //                Ray ray = Camera.main.ScreenPointToRay(Mytouch.position);
-
-    //                if (Mathf.Abs(ray.origin.x - SettingsMenu[0].transform.position.x) < SettingsMenu[0].transform.localScale.x * 1.35f && Mathf.Abs(ray.origin.y - SettingsMenu[0].transform.position.y) < SettingsMenu[0].transform.localScale.y / 1.75f)
-    //                {
-    //                    MainObjectsMenu[0].SetActive(true);
-    //                    MainObjectsMenu[2].SetActive(false);
-    //                    SettingsActive = false;
-    //                }
-    //                else if (Mathf.Abs(ray.origin.x - SettingsMenu[1].transform.position.x) < SettingsMenu[1].transform.localScale.x * 1.35f && Mathf.Abs(ray.origin.y - SettingsMenu[1].transform.position.y) < SettingsMenu[1].transform.localScale.y / 1.75f)
-    //                {
-    //                    SaveSystem.Load();
-    //                    SceneManager.LoadScene(GameConstants.TutorialScene);
-    //                }
-    //            }
-    //        }
-    //    }
-    //    /*else if (Leaderboards)
-    //    {
-    //        if (Input.touchCount > 0)
-    //        {
-    //            Touch Mytouch = Input.GetTouch(0);
-    //            if (Mytouch.phase == TouchPhase.Began)
-    //            {
-    //                Ray ray = Camera.main.ScreenPointToRay(Mytouch.position);
-
-    //                if (Mathf.Abs(ray.origin.x - Leaderboard[0].transform.position.x) < Leaderboard[0].transform.localScale.x && Mathf.Abs(ray.origin.y - Leaderboard[0].transform.position.y) < Leaderboard[0].transform.localScale.y / 2f)
-    //                {
-    //                    MainObjectsMenu[3].SetActive(false);
-    //                    MainObjectsMenu[0].SetActive(true);
-    //                    Leaderboards = false;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    */
-    //    else if (Info)
-    //    {
-    //        if (Input.touchCount > 0)
-    //        {
-    //            Touch Mytouch = Input.GetTouch(0);
-    //            if (Mytouch.phase == TouchPhase.Began)
-    //            {
-    //                Ray ray = Camera.main.ScreenPointToRay(Mytouch.position);
-
-    //                if (Mathf.Abs(ray.origin.x - Leaderboard[1].transform.position.x) < Leaderboard[1].transform.localScale.x * 1.35f && Mathf.Abs(ray.origin.y - Leaderboard[1].transform.position.y) < Leaderboard[1].transform.localScale.y / 1.75f)
-    //                {
-    //                    MainObjectsMenu[4].SetActive(false);
-    //                    MainObjectsMenu[0].SetActive(true);
-    //                    Info = false;
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 
     public void UpdateDailyTrigger()
     {
@@ -1212,4 +1045,3 @@ public class MenuController : MonoBehaviour
         }
     }
 }
-

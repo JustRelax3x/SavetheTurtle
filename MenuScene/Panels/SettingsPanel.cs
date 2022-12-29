@@ -26,6 +26,7 @@ public class SettingsPanel : ViewPanel
     [Header("Mixer")]
     [SerializeField]
     private AudioMixer _mixer;
+
     private readonly Color DisabledColor = new Color(0.47f, 0.47f, 0.47f);
     private readonly Color ActiveColor = new Color(1f, 1f, 1f);
 
@@ -41,10 +42,11 @@ public class SettingsPanel : ViewPanel
         _languageChanged = languageChanged;
     }
 
-    private void Start()
+    private void OnEnable()
     {
         LanguageSystemStart();
         MusicSystemStart();
+        TrackSystemStart();
         _music.onClick.AddListener(MusicButton);
         _volume.onClick.AddListener(VolumeButton);
         _language.onClick.AddListener(LanguageButton);
@@ -113,7 +115,17 @@ public class SettingsPanel : ViewPanel
         MusicButton();
     }
 
-    private void OnDestroy()
+    private void TrackSystemStart()
+    {
+        int x = -1;
+        if (PlayerPrefs.HasKey("Track"))
+        {
+            x = PlayerPrefs.GetInt("Track");
+        }
+        TrackChooser(x);
+    }
+
+    private void OnDisable()
     {
         _music.onClick.RemoveAllListeners();
         _volume.onClick.RemoveAllListeners();
