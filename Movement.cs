@@ -45,7 +45,7 @@ public class Movement : MonoBehaviour
             shieldoffTime *= 2;
         }
         ability = Player.Ability;
-        Ach = gameObject.AddComponent<AchInc>();
+        Ach = new AchInc();
         astraldamage = 200 - 25 * Player.AbilityLevel[2];
         Immortal = false;
         ImmTime = 1f;

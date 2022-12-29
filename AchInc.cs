@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using GooglePlayGames;
 
-public class AchInc : MonoBehaviour
+public class AchInc
 {
     public void UpdateIncremental(int i)
     {

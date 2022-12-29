@@ -25,7 +25,7 @@ public class Tutorial : MonoBehaviour
     }
     private void Start()
     {
-        Ach = gameObject.AddComponent<AchInc>();
+        Ach = new AchInc();
     }
     void FixedUpdate()
     {
@@ -78,7 +78,7 @@ public class Tutorial : MonoBehaviour
             if (Time.timeSinceLevelLoad > 34f)
             {
                 tutorial = false; 
-                UnityEngine.SceneManagement.SceneManager.LoadScene("MainGame");
+                UnityEngine.SceneManagement.SceneManager.LoadScene(GameConstants.GameScene);
             }
         }
     }

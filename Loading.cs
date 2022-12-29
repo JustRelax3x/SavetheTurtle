@@ -1,12 +1,18 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Loading : MonoBehaviour
 {
-    public Slider _bar;
+    [SerializeField]
+    private Slider _bar;
+    [SerializeField]
+    private DataBridge _bridge;
+
+    private Task _task;
+    private readonly WaitForSecondsRealtime _wait = new WaitForSecondsRealtime(1f);
     void Start()
     {
         Load();
@@ -14,26 +20,25 @@ public class Loading : MonoBehaviour
 
     public void Load()
     {
-        //добавить вход в аккаунт + загрузка данных.
-        
-
+        _task = Task.Factory.StartNew(() => _bridge.CreateOrLoadFromDB());
         StartCoroutine(LoadAsync());
     }
 
-    IEnumerator  LoadAsync()
+    IEnumerator LoadAsync()
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Menu");
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(GameConstants.MenuScene);
 
         asyncLoad.allowSceneActivation = false; 
         while (!asyncLoad.isDone)
         {
             _bar.value = asyncLoad.progress;
-            if (!asyncLoad.allowSceneActivation && Time.timeSinceLevelLoad > 1f) 
+            if (_task.IsCompleted || Time.timeSinceLevelLoad > 8f) 
             {
-                    asyncLoad.allowSceneActivation = true;
+                asyncLoad.allowSceneActivation = true;
+                _task.Dispose();
             }
             
-            yield return null;
+            yield return _wait;
         }
     }
 }
