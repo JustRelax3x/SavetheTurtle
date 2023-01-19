@@ -18,6 +18,9 @@ public class PanelsSwitcher : MonoBehaviour, IPanelSwitcher
 
     private void Start()
     {
+        _shop.gameObject.SetActive(false);
+        _settings.gameObject.SetActive(false);
+        _stats.gameObject.SetActive(false);
         Switch(DefaultPanel);
     }
 

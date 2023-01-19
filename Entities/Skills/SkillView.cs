@@ -1,9 +1,10 @@
-﻿using UnityEngine.UI;
-[System.Serializable]
-internal struct SkillView
+﻿using UnityEngine;
+using UnityEngine.UI;
+internal class SkillView : MonoBehaviour
 {
     public SkillData Data;
     public Text Name;
+    public Text Description;
     public Text EffectDescriptionStatus;
     public Text LevelUpScaleCoefficient;
     public Text Cost;

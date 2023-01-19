@@ -1,24 +1,35 @@
 ﻿using UnityEngine;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 
-internal class ExtraSkillsPanel : MonoBehaviour
+internal class ExtraSkillsPanel : ExtraPanel
 {
     [SerializeField]
     private SkillView[] _skillView;
+    [SerializeField]
+    private SpriteAtlas _spriteAtlas;
 
-    private System.Action _notEnoughMoney;
-    private System.Action _updateMoney;
-
-    private void Open(System.Action OpenDonate, System.Action UpdateMoney)
+    public override void Open(System.Action OpenDonate, System.Action UpdateMoney)
     {
         _notEnoughMoney = OpenDonate;
         _updateMoney = UpdateMoney;
+        for (int i=0; i < _skillView.Length; i++)
+        {
+            SetUpSkillView(i);
+            _skillView[i].gameObject.SetActive(true);
+        }
+        gameObject.SetActive(true);
     }
 
-    public void SetUpSkillView(int index)
+    private void SetUpSkillView(int index)
     {
         var skill = _skillView[index];
+        skill.Name.text = skill.Data.Name;
+        skill.Description.text = skill.Data.Description;
         skill.EffectDescriptionStatus.text = $"{skill.Data.GetEffectDescriptionStatus()} {skill.Data.GetValue()}";
+        skill.LevelUpScaleCoefficient.text = skill.Data.GetLevelUpCoeff() > 0 ? $"+{skill.Data.GetLevelUpCoeff()}" : skill.Data.GetLevelUpCoeff().ToString();
+        skill.Icon.sprite = _spriteAtlas.GetSprite(skill.Data.GetSpriteName());
+        skill.UpgradeButton.onClick.AddListener(() => UpgradeSkillButton(index));
         if (!skill.Data.IsMaxLevel())
         {
             skill.Cost.text = $"{Assets.SimpleLocalization.LocalizationManager.Localize("cost")} {skill.Data.GetCost()}";
@@ -43,5 +54,13 @@ internal class ExtraSkillsPanel : MonoBehaviour
         else _notEnoughMoney?.Invoke();
     }
 
+    public override void Close()
+    {
+        gameObject.SetActive(false);
+        for (int i = 0; i < _skillView.Length; i++)
+        {
+            _skillView[i].UpgradeButton.onClick.RemoveAllListeners();
+        }
+    }
 }
 

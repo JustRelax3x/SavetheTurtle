@@ -21,7 +21,7 @@ public class ShopPanel : ViewPanel
     [SerializeField]
     private GameObject _skinsPanel;
     [SerializeField]
-    private GameObject _skillsPanel;
+    private ExtraPanel _skillsPanel;
     [SerializeField]
     private GameObject _abilitiesPanel;
     [SerializeField]
@@ -35,7 +35,7 @@ public class ShopPanel : ViewPanel
 
     private bool _isExtraPanelOpened = false;
 
-    private GameObject _currentExtraPanel;
+    private ExtraPanel _currentExtraPanel;
     public override MenuPanelType PanelType()
     {
         return MenuPanelType.Shop;
@@ -43,25 +43,25 @@ public class ShopPanel : ViewPanel
 
     private void Start()
     {
-        _skins.onClick.AddListener(() => OpenExtraPanel(_skinsPanel));
+        _skins.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
         _skills.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
-        _abilities.onClick.AddListener(() => OpenExtraPanel(_abilitiesPanel));
-        _maps.onClick.AddListener(() => OpenExtraPanel(_mapsPanel));
+        _abilities.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
+        _maps.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
         _back.onClick.AddListener(BackButton);
-        _currentExtraPanel = _skinsPanel;
+        _currentExtraPanel = _skillsPanel; //_skinsPanel;
     }
 
     public override void Open(IPanelSwitcher panelSwitcher)
     {
-        _money.text = Player.money.ToString();
+        UpdateMoney();
         _isExtraPanelOpened = false;
+        SetButtonsActive(true);
         base.Open(panelSwitcher);
     }
-
-    private void OpenExtraPanel(GameObject panel)
+    private void OpenExtraPanel(ExtraPanel panel)
     {
         _currentExtraPanel = panel;
-        _currentExtraPanel.SetActive(true);
+        _currentExtraPanel.Open(OpenDonatePanel, UpdateMoney);
         _isExtraPanelOpened = true;
         SetButtonsActive(false);
     }
@@ -74,10 +74,20 @@ public class ShopPanel : ViewPanel
         _maps.gameObject.SetActive(flag);
     }
 
+    private void OpenDonatePanel()
+    {
+
+    }
+
+    private void UpdateMoney()
+    {
+        _money.text = Player.money.ToString();
+    }
+
     private void BackButton()
     {
         if (!_isExtraPanelOpened) Close(MenuPanelType.MainMenu);
-        _currentExtraPanel.SetActive(false);
+        _currentExtraPanel.Close();
         _isExtraPanelOpened = false;
         SetButtonsActive(true);
     }
@@ -88,5 +98,6 @@ public class ShopPanel : ViewPanel
         _skills.onClick.RemoveAllListeners();
         _abilities.onClick.RemoveAllListeners();
         _maps.onClick.RemoveAllListeners();
+        _back.onClick.RemoveAllListeners(); 
     }
 }
