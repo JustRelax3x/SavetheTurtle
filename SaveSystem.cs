@@ -1,7 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
 public class SaveSystem : MonoBehaviour
 {
     public SaveData save = new SaveData();
@@ -53,21 +51,6 @@ public class SaveSystem : MonoBehaviour
     {
         SaveData save = new SaveData();
         SaveShopData shop = new SaveShopData();
-        save.TakeData();
-        PlayerPrefs.SetString("Save", Helper.Encrypt(JsonUtility.ToJson(save)));
-        shop.TakeShopData();
-        PlayerPrefs.SetString("Shop", Helper.Encrypt(JsonUtility.ToJson(shop)));
-    }
-    public void OnApplicationQuit()
-    {
-        save.TakeData();
-        PlayerPrefs.SetString("Save", Helper.Encrypt(JsonUtility.ToJson(save)));
-        shop.TakeShopData();
-        PlayerPrefs.SetString("Shop", Helper.Encrypt(JsonUtility.ToJson(shop)));
-        PlayGamesPlatform.Instance.SignOut();
-    }
-    public void OnApplicationPause()
-    {
         save.TakeData();
         PlayerPrefs.SetString("Save", Helper.Encrypt(JsonUtility.ToJson(save)));
         shop.TakeShopData();

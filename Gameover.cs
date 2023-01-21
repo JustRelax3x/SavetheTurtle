@@ -142,7 +142,7 @@ public class Gameover : MonoBehaviour
         audiososka = GetComponent<AudioSource>();
         PuckDuration = Player.PuckSkillLevel * 0.1f + 0.5f;
         PuckTimer = false;
-        Ach = gameObject.AddComponent<AchInc>();
+        Ach = new AchInc();
         UnUsed = true;
         if (Player.muted)
         {
@@ -242,22 +242,20 @@ public class Gameover : MonoBehaviour
                         Time.timeScale = 1;
                         gameover = false;
                         SaveSystem.Load();
-                        CloudSave.OpenSaveToCloud(true);
-                        SceneManager.LoadScene("Menu");
+                        SceneManager.LoadScene(GameConstants.MenuScene);
                     }
                     else if (!Tuto && Mathf.Abs(ray.origin.x - RestartButton.transform.position.x) < RestartButton.transform.localScale.x * 1.35f && Mathf.Abs(ray.origin.y - RestartButton.transform.position.y) < RestartButton.transform.localScale.y / 2f)
                     {
                         Time.timeScale = 1;
                         gameover = false;
                         SaveSystem.Load();
-                        CloudSave.OpenSaveToCloud(true);
-                        SceneManager.LoadScene("MainGame");
+                        SceneManager.LoadScene(GameConstants.GameScene);
                     }
                     else if (Tuto && Mathf.Abs(ray.origin.x - RestartButton.transform.position.x) < RestartButton.transform.localScale.x * 1.35f && Mathf.Abs(ray.origin.y - RestartButton.transform.position.y) < RestartButton.transform.localScale.y / 2f)
                     {
                         Time.timeScale = 1;
                         gameover = false;
-                        SceneManager.LoadScene("Tutorial");
+                        SceneManager.LoadScene(GameConstants.TutorialScene);
                     }
                 }
             }
@@ -352,16 +350,14 @@ public class Gameover : MonoBehaviour
                     {
                         Time.timeScale = 1f;
                         SaveSystem.Load();
-                        CloudSave.OpenSaveToCloud(true);
-                        SceneManager.LoadScene("Menu");
+                        SceneManager.LoadScene(GameConstants.MenuScene);
                     }
                     else if (Tuto && Mathf.Abs(ray.origin.x - PauseText[1].transform.position.x) < PauseText[1].transform.localScale.x * 1.35f && Mathf.Abs(ray.origin.y - PauseText[1].transform.position.y) < PauseText[1].transform.localScale.y / 2f)
                     {
                         Tuto = false;
                         Time.timeScale = 1f;
                         SaveSystem.Load();
-                        CloudSave.OpenSaveToCloud(true);
-                        SceneManager.LoadScene("MainGame");
+                        SceneManager.LoadScene(GameConstants.GameScene);
                     }
                 }
 

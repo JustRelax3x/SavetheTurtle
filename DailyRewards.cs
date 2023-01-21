@@ -83,7 +83,6 @@ public class DailyRewards : MonoBehaviour
                 CanClaimReward = false;
                 currentStreak = 0;
                 Player.CurrentReward = currentStreak;
-                CloudSave.OpenSaveToCloud(true);
                 SaveSystem.Load();
             }
             if (lastClaimTime.HasValue)
@@ -95,7 +94,6 @@ public class DailyRewards : MonoBehaviour
                     Player.dateTime = lastClaimTime;
                     currentStreak = 0;
                     Player.CurrentReward = currentStreak;
-                    CloudSave.OpenSaveToCloud(true);
                     SaveSystem.Load();
                 }
                 else if (timeSpan.TotalHours < claimCooldown)
@@ -155,7 +153,6 @@ public class DailyRewards : MonoBehaviour
         currentStreak = (currentStreak + 1) % maxStreakCount;
         Player.CurrentReward = currentStreak;
         SaveSystem.Load();
-        CloudSave.OpenSaveToCloud(true);
         notification.OnUse();
 
         UpdateRewardState();
