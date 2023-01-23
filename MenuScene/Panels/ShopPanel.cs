@@ -19,15 +19,15 @@ public class ShopPanel : ViewPanel
     [Space(10)]
     [Header("Panels")]
     [SerializeField]
-    private GameObject _skinsPanel;
+    private ExtraPanel _skinsPanel;
     [SerializeField]
     private ExtraPanel _skillsPanel;
     [SerializeField]
-    private GameObject _abilitiesPanel;
+    private ExtraPanel _abilitiesPanel;
     [SerializeField]
-    private GameObject _mapsPanel;
+    private ExtraPanel _mapsPanel;
     [SerializeField]
-    private GameObject _donatePanel;
+    private ExtraPanel _donatePanel;
     [Space(10)]
     [Header("Texts")]
     [SerializeField]
@@ -43,17 +43,18 @@ public class ShopPanel : ViewPanel
 
     private void Start()
     {
-        _skins.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
+        _skins.onClick.AddListener(() => OpenExtraPanel(_skinsPanel));
         _skills.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
-        _abilities.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
-        _maps.onClick.AddListener(() => OpenExtraPanel(_skillsPanel));
+        _abilities.onClick.AddListener(() => OpenExtraPanel(_abilitiesPanel));
+        _maps.onClick.AddListener(() => OpenExtraPanel(_mapsPanel));
         _back.onClick.AddListener(BackButton);
-        _currentExtraPanel = _skillsPanel; //_skinsPanel;
+        _currentExtraPanel =_skinsPanel;
     }
 
     public override void Open(IPanelSwitcher panelSwitcher)
     {
         UpdateMoney();
+        _money.gameObject.SetActive(true);
         _isExtraPanelOpened = false;
         SetButtonsActive(true);
         base.Open(panelSwitcher);
@@ -87,9 +88,8 @@ public class ShopPanel : ViewPanel
     private void BackButton()
     {
         if (!_isExtraPanelOpened) Close(MenuPanelType.MainMenu);
-        _currentExtraPanel.Close();
-        _isExtraPanelOpened = false;
-        SetButtonsActive(true);
+        _isExtraPanelOpened = !_currentExtraPanel.TryClose();
+        SetButtonsActive(!_isExtraPanelOpened);
     }
 
     private void OnDestroy()

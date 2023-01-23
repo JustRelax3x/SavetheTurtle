@@ -54,13 +54,15 @@ internal class ExtraSkillsPanel : ExtraPanel
         else _notEnoughMoney?.Invoke();
     }
 
-    public override void Close()
+    public override bool TryClose()
     {
         gameObject.SetActive(false);
         for (int i = 0; i < _skillView.Length; i++)
         {
             _skillView[i].UpgradeButton.onClick.RemoveAllListeners();
         }
+        SaveSystem.Load();
+        return true;
     }
 }
 

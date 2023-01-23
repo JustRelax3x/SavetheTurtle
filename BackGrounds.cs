@@ -5,20 +5,13 @@ public class BackGrounds : MonoBehaviour
 {
     public Image Back;
     public BackGround Ground;
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         int map = Player.Map;
-        if (map == 50)
+        if (map == GameConstants.RandomMap)
         {
-            while (map > 49)
-            {
-                int x = Random.Range(0, 6);
-                if (Player.MapOpen[x])
-                {
-                    map = x;
-                }
-            }
+            do map = Random.Range(0, GameConstants.MapsLength);
+            while (map != GameConstants.RandomMap && Player.HasMapOpen(map));
         }
         switch (map)
         {
